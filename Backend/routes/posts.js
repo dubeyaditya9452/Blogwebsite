@@ -100,13 +100,53 @@ router.delete("/:id", verifyToken, async (req, res) => {
 // GET POSTS BY CATEGORY
 router.get("/category/:category", async (req, res) => {
     try {
+        // Convert category to title case for consistent matching
+        const category = req.params.category
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+
         const posts = await Post.find({
-            categories: { $in: [req.params.category] }
-        }).sort({ createdAt: -1 })
-        res.status(200).json(posts)
+            categories: { 
+                $in: [
+                    category,
+                    category.toLowerCase(),
+                    category.toUpperCase()
+                ]
+            }
+        }).sort({ createdAt: -1 });
+
+        // Get unique categories for suggestions
+        const allCategories = await Post.distinct('categories');
+        const suggestedCategories = allCategories
+            .filter(cat => cat.toLowerCase().includes(category.toLowerCase()))
+            .slice(0, 5);
+
+        res.status(200).json({
+            posts,
+            suggestedCategories: suggestedCategories.length > 0 ? suggestedCategories : null
+        });
     } catch (err) {
-        res.status(500).json(err)
+        console.error('Category search error:', err);
+        res.status(500).json({
+            message: "Error searching posts by category",
+            error: err.message
+        });
     }
-})
+});
+
+// GET ALL CATEGORIES
+router.get("/categories/all", async (req, res) => {
+    try {
+        const categories = await Post.distinct('categories');
+        res.status(200).json(categories);
+    } catch (err) {
+        console.error('Get categories error:', err);
+        res.status(500).json({
+            message: "Error fetching categories",
+            error: err.message
+        });
+    }
+});
 
 module.exports = router 
