@@ -9,6 +9,8 @@
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
   },
   "dependencies": {
-    "concurrently": "^8.2.0"
+    "axios": "^1.9.0",
+    "concurrently": "^8.2.0",
+    "framer-motion": "^12.12.1"
   }
-} 
+}

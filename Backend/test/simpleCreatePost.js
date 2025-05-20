@@ -39,4 +39,4 @@ const createPost = async () => {
     }
 };
 
-createPost(); 
+createPost();  

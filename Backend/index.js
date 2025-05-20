@@ -24,12 +24,12 @@ app.use(cors())
 // MongoDB Connection
 console.log('Attempting to connect to MongoDB...')
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/blogwebsite')
-.then(() => {
-    console.log('Connected to MongoDB successfully')
-})
-.catch((err) => {
-    console.error('MongoDB Connection Error:', err)
-})
+    .then(() => {
+        console.log('Connected to MongoDB successfully')
+    })
+    .catch((err) => {
+        console.error('MongoDB Connection Error:', err)
+    })
 
 // Debug middleware to log requests
 app.use((req, res, next) => {
@@ -45,7 +45,7 @@ app.post('/api/auth/register', async (req, res) => {
     try {
         const { username, email, password } = req.body
         console.log('Attempting to register user:', { username, email })
-        
+
         // Check if user already exists
         const existingUser = await User.findOne({ $or: [{ email }, { username }] })
         if (existingUser) {
@@ -97,8 +97,8 @@ app.post('/api/auth/login', async (req, res) => {
 
         // Create token
         const token = jwt.sign(
-            { id: user._id, username: user.username }, 
-            process.env.JWT_SECRET || "your-secret-key", 
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET || "your-secret-key",
             { expiresIn: "3d" }
         )
 
